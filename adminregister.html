@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Registration</title>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="adminregistrationform.css">
+</head>
+<body>
+
+  <div class="register-container">
+    <h2>Admin Registration</h2>
+
+    <!-- Admin Registration Form -->
+    <input type="text" id="register_fullname" class="input-field" placeholder="Enter your full name" required>
+    <input type="email" id="register_email" class="input-field" placeholder="Enter your email" required>
+    <input type="password" id="register_password" class="input-field" placeholder="Enter your password" required>
+    <input type="tel" id="register_phone" class="input-field" placeholder="Enter your phone number" required>
+    
+    <!-- Optional fields for admin -->
+    <input type="text" id="register_role_description" class="input-field" placeholder="Enter your role description (optional)">
+    <input type="text" id="register_organization" class="input-field" placeholder="Enter your organization/store name (optional)">
+    <input type="text" id="register_security_question" class="input-field" placeholder="Enter a security question (optional)">
+    <input type="text" id="register_security_answer" class="input-field" placeholder="Answer to the security question (optional)">
+
+    <button class="register-btn" id="registerButton">Register as Admin</button>
+
+    <!-- Footer with Login Link -->
+    <div class="footer">
+      <p>Already an admin? <a href="login.html">Login here</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkqf4xzSFa6qpFlMF-ce9x6WwDlxCvitw",
+      authDomain: "fir-1-7332d.firebaseapp.com",
+      projectId: "fir-1-7332d",
+      storageBucket: "fir-1-7332d.firebasestorage.app",
+      messagingSenderId: "689157988789",
+      appId: "1:689157988789:web:89530ef7190e4802e2b9fc",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Register Admin function
+    async function registerAdmin() {
+      const fullName = document.getElementById('register_fullname').value.trim();
+      const email = document.getElementById('register_email').value.trim();
+      const password = document.getElementById('register_password').value.trim();
+      const phone = document.getElementById('register_phone').value.trim();
+      const roleDescription = document.getElementById('register_role_description').value.trim();
+      const organization = document.getElementById('register_organization').value.trim();
+      const securityQuestion = document.getElementById('register_security_question').value.trim();
+      const securityAnswer = document.getElementById('register_security_answer').value.trim();
+
+      // Validate inputs
+      if (!fullName || !email || !password || !phone) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      try {
+        // Create admin account with Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Store admin details in Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+          fullName: fullName,
+          email: user.email,
+          phone: phone,
+          role: "Admin", // Explicitly set role as Admin
+          roleDescription: roleDescription || null,
+          organization: organization || null,
+          securityQuestion: securityQuestion || null,
+          securityAnswer: securityAnswer || null,
+        });
+
+        alert('Admin registered successfully!');
+        // Redirect to login page after successful registration
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error('Error registering admin:', error.message);
+        alert('Error: ' + error.message);
+      }
+    }
+
+    // Add event listener for the register button
+    document.getElementById('registerButton').addEventListener('click', registerAdmin);
+  </script>
+
+</body>
+</html>

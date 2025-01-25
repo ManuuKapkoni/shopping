@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - RFID Scans</title>
+  <!-- Import Firebase Modules -->
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js"></script> 
+  <script type="module" src="testtodaysdeal.js"></script>
+  <script type="module" src="newarrivals.js"></script>
+  <script type="module" src="updatedealsfromfirebase.js"></script>
+  <script type="module" src="customerscansrfid.js"></script>
+  <script type="module" src="shoppingtillcheckout.js"></script>
+
+  <!-- External CSS Files -->
+  <!-- <link rel="stylesheet" href="mainsectionnavigation.css"> -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="customernewstyling.css">
+</head>
+<body>
+   <!-- Header Section -->
+  <header class="header">
+    <div class="header-container">
+      <!-- Logo -->
+      <div class="logo">
+        <img src="images/smart trolley logo.jpg" alt="Shopping Cart Logo" class="logo-image">
+      </div>
+      <!-- Navbar -->
+      <nav class="navbar">
+        <ul>
+          <li><a href="#dashboard" onclick="showSection('dashboard')">Dashboard</a></li>
+          <li><a href="#todays-deals" onclick="showSection('todays-deals')">Today's Deals</a></li>
+          <li><a href="#new-arrivals" onclick="showSection('new-arrivals')">New Arrivals</a></li>
+          <li><a href="#gift-cards" onclick="showSection('gift-cards')">Gift Cards</a></li>
+          <li><a href="#customer-service" onclick="showSection('customer-service')">Customer Service</a></li>
+          <li><a href="#cart" onclick="showSection('cart')">Cart</a></li>
+          <li><a href="#your-account" onclick="showSection('your-account')">Your Account</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Content Section -->
+  <div class="content-container">
+    <!-- Dashboard Section -->
+    <section id="dashboard">
+      <!-- Search Bar (Visible only in Dashboard) -->
+      <div class="search-bar" id="dashboardSearchBar">
+        <select class="category-dropdown">
+          <option>All</option>
+          <option>Electronics</option>
+          <option>Groceries</option>
+          <option>Fashion</option>
+        </select>
+        <input type="text" placeholder="Search for products..." class="search-input">
+        <button class="search-button">Search</button>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="welcome-section">
+        <h1>Welcome to Smart Shopping!</h1>
+        <p>Effortlessly add items to your cart with RFID technology. View your scanned items live!</p>
+        <img src="images/shopping banner.jpg" alt="Shopping Banner" class="banner-image">
+      </div>
+
+      <div id="start-shopping-section">
+        <h2>Start Shopping</h2>
+        <p>Ready to shop? Click the button below to view your cart and start scanning items!</p>
+        <button id="shopNowButton" onclick="toggleCart()">View My Cart</button>
+      </div>
+    </section>
+
+    <!-- Cart Section (Initially Hidden) -->
+    <section id="cartPage" style="display: none;">
+    <!-- Container for displaying scanned RFID tags and cart items side by side -->
+    <div class="container">
+      <!-- RFID Scans Section -->
+      <section id="scanned-rfid">
+        <h2>RFID Scans</h2>
+        <div id="tagsList">
+          <!-- Dynamically added RFID tags will go here -->
+        </div>
+      </section>
+
+      <!-- Cart Section -->
+      <!-- <section id="cart">
+        <h2>Your Cart</h2>
+        <div id="cartList"> -->
+          <!-- Dynamically added cart items will go here -->
+          <!-- <button id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+        
+      </section> -->
+      <section id="cart" style="margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <h2 style="font-size: 1.5em; margin-bottom: 15px;">Your Cart</h2>
+        <div id="cartList" style="display: flex; flex-direction: column; gap: 15px;">
+          <!-- Dynamically added cart items will go here -->
+          <!-- Example of dynamically added cart item:
+            <div class="cart-item">
+              <h3>Product Name</h3>
+              <p>Price: $100</p>
+              <button onclick="toggleCartDetails('productId')">View Details</button>
+              <div id="details-productId" class="cart-details" style="display: none;">
+                <p>Product Description</p>
+              </div>
+            </div>
+          -->
+        </div>
+        <button id="checkoutBtn" style="margin-top: 20px; padding: 10px 20px; background-color: #4caf50; color: white; border: none; border-radius: 5px; cursor: pointer;">Proceed to Checkout</button>
+      </section>
+      
+    </div>
+
+    <!-- Total Amount Section -->
+    <h3 id="total-price">Total: $0.00</h3>
+
+    <!-- Proceed to Checkout Button -->
+    <!-- <button id="checkoutBtn">Proceed to Checkout</button> -->
+
+    <!-- Payment Form -->
+    <div id="checkoutForm" style="display: none;">
+      <h2>Select Payment Method</h2>
+      <label>
+        <input type="radio" name="payment-method" value="cash"> Cash
+      </label><br>
+      <label>
+        <input type="radio" name="payment-method" value="mpesa"> MPesa
+      </label><br>
+      <label>
+        <input type="radio" name="payment-method" value="bank"> Bank
+      </label><br>
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" placeholder="Enter phone number" required><br>
+      <button id="submitPayment">Submit Payment</button>
+    </div>
+    </section>
+
+     <!-- Today's Deals Section (Initially Hidden) -->
+    <section id="todays-deals" class="content-section" style="display: none;">
+        <h2>Today's Deals</h2>
+        <!-- Button to Show Deals -->
+        <button id="todaysDealsBtn">Show Today's Deals</button>
+        <div id="dealsList">
+        <!-- Dynamically added deals will go here -->
+        </div>
+         <!-- Button to Show Deals -->
+        <!-- <button id="todaysDealsBtn">Show Today's Deals</button> -->
+    </section>
+
+    <!-- New Arrivals Section (Initially Hidden) -->
+    <section id="new-arrivals" class="content-section" style="display: none;">
+        <h2>New Arrivals</h2>
+        <div id="newArrivalsList">
+        <!-- Dynamically added new arrivals will go here -->
+        </div>
+         <!-- Button to Show New Arrivals -->
+        <button id="newArrivalsBtn">Show New Arrivals</button>
+    </section>
+
+   
+
+    <section id="gift-cards" class="content-section" style="display: none;">
+        <h1>Gift Card Validation</h1>
+        <div class="form-container">
+          <form id="giftCardForm">
+            <label for="giftCardCode">Enter Gift Card Code:</label>
+            <input type="text" id="giftCardCode" placeholder="Gift Card Code" required>
+            <button type="submit">Apply Gift Card</button>
+          </form>
+          <div id="giftCardMessage"></div>
+        </div>
+      
+        <div class="cart-total">
+          Cart Total: <span id="cartTotal">$100.00</span>
+        </div>
+    </section>
+
+    <section id="customer-service" class="content-section" style="display: none;">
+      <h2>Customer Service</h2>
+      <p>Need assistance? Contact our customer service team.</p>
+    </section>
+
+    <!-- Account Section (Initially hidden) -->
+    <section id="your-account" class="content-section" style="display: none;">
+      <h2>Your Account</h2>
+      <div class="account-subsection">
+        <h3>Personal Information</h3>
+        <img id="profile-picture" src="images/person2.jpg" alt="Profile Picture" class="profile-picture" onclick="toggleAccountSection()">
+        <input type="file" id="upload-picture" accept="image/*" onchange="previewImage()"><br>
+        <button type="button" onclick="uploadImage()">Upload Picture</button>
+        <p>Manage your personal details and contact information.</p>
+        <form>
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" placeholder="Your Name" required><br>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="Your Email" required><br>
+          <label for="phone">Phone:</label>
+          <input type="tel" id="phone" name="phone" placeholder="Your Phone Number"><br>
+          <button type="submit">Update Information</button>
+        </form>
+      </div>
+      <div class="account-subsection">
+        <h3>Shopping History</h3>
+        <p>View your past orders and track current orders.</p>
+        <ul>
+          <li>Order #12345 - Status: Delivered</li>
+          <li>Order #12346 - Status: Processing</li>
+        </ul>
+      </div>
+      <div class="account-subsection">
+        <h3>Payment Methods</h3>
+        <p>Manage your saved payment methods.</p>
+        <form id="payment-form">
+          <label for="payment-method">Payment Method:</label>
+          <select id="payment-method" name="payment-method" onchange="togglePaymentOptions()">
+            <option value="cash">Cash</option>
+            <option value="paypal">PayPal</option>
+            <option value="mpesa">MPESA</option>
+            <option value="bank">Bank</option>
+            <option value="ussd">USSD</option>
+          </select><br>
+          <!-- Bank Selection (Initially hidden) -->
+          <div id="bank-options" style="display: none;">
+            <label for="bank">Select Bank:</label>
+            <select id="bank" name="bank" onchange="toggleOtherBankOptions()">
+              <option value="kcb">KCB</option>
+              <option value="equity">Equity</option>
+              <option value="national-bank">National Bank</option>
+              <option value="cooperative-bank">Cooperative Bank</option>
+              <option value="other">Other Commercial Banks</option>
+            </select><br>
+          </div>
+          <!-- Other Bank Details (Initially hidden) -->
+          <div id="other-bank-details" style="display: none;">
+            <label for="other-bank-name">Bank Name:</label>
+            <input type="text" id="other-bank-name" name="other-bank-name" placeholder="Bank Name"><br>
+            <label for="other-bank-card-number">Bank Card Number:</label>
+            <input type="text" id="other-bank-card-number" name="other-bank-card-number" placeholder="Bank Card Number"><br>
+          </div>
+          <!-- Card Details (Initially hidden) -->
+          <div id="card-details" style="display: none;">
+            <label for="card-number">Card Number:</label>
+            <input type="text" id="card-number" name="card-number" placeholder="Card Number" required><br>
+            <label for="expiry-date">Expiry Date:</label>
+            <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" required><br>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" placeholder="CVV" required><br>
+          </div>
+          <!-- USSD Details (Initially hidden) -->
+          <div id="ussd-details" style="display: none;">
+            <label for="ussd-code">USSD Code:</label>
+            <input type="text" id="ussd-code" name="ussd-code" placeholder="Enter USSD Code"><br>
+          </div>
+          <button type="submit">Add Payment Method</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <ul class="social-links">
+      <li><a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i>Facebook</a></li>
+      <li><a href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i>Twitter</a></li>
+      <li><a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i>Instagram</a></li>
+      <li><a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin"></i>LinkedIn</a></li>
+    </ul>
+    <p>© 2024 Smart Shopping Cart. All Rights Reserved.</p>
+  </footer >
+  
+   <!-- External JS Files -->
+  <script src="custstomerdasboardshop.js"></script>
+  <script src="accountsectiontoggle.js"></script>
+  <script src="uploadingpicture.js"></script>
+  
+  <script src="mainsectionnavigation.js"></script>
+  <!-- <script src="dealsnavigation.js"></script> -->
+
+  <script>
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      const checkoutForm = document.getElementById('checkoutForm');
+      // Toggle visibility of the checkout form
+      checkoutForm.style.display = checkoutForm.style.display === 'none' ? 'block' : 'none';
+    });
+  
+    document.getElementById('submitPayment').addEventListener('click', () => {
+      alert('Payment submitted!');
+    });
+  </script>
+
+ 
+  <script>
+    function toggleCartDetails(cartItemId) {
+        const detailsDiv = document.getElementById('details-' + cartItemId);
+        if (detailsDiv) {
+            if (detailsDiv.style.display === 'none') {
+                detailsDiv.style.display = 'block';
+            } else {
+                detailsDiv.style.display = 'none';
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Additional initialization code if needed
+    });
+</script>
+
+
+</body>
+</html>

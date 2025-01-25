@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFID Shopping Cart</title>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAkqf4xzSFa6qpFlMF-ce9x6WwDlxCvitw",
+        authDomain: "fir-1-7332d.firebaseapp.com",
+        databaseURL: "https://fir-1-7332d-default-rtdb.firebaseio.com",
+        projectId: "fir-1-7332d",
+        storageBucket: "fir-1-7332d.firebasestorage.app",
+        messagingSenderId: "689157988789",
+        appId: "1:689157988789:web:89530ef7190e4802e2b9fc",
+        measurementId: "G-165ZMR7RPV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    let totalAmount = 0;
+
+    // Fetch the scanned RFID tags from Firebase
+    function fetchScannedTags() {
+        const scannedTagsRef = ref(database, 'scanned_rfid_tags');
+        get(scannedTagsRef)
+            .then((snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const tags = Object.values(data); // Convert object to array of tag objects
+                    displayScannedTags(tags); // Function to display them
+                } else {
+                    console.log('No scanned tags found');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching scanned RFID tags:', error);
+            });
+    }
+
+    // Display the scanned RFID tags and corresponding product information
+    function displayScannedTags(tags) {
+        const tagsList = document.getElementById('tagsList');
+        const cartList = document.getElementById('cartList');
+        tagsList.innerHTML = ''; // Clear previous content
+        cartList.innerHTML = ''; // Clear cart content
+        totalAmount = 0; // Reset total
+
+        tags.forEach(tag => {
+            const rfidTag = tag.rfid_tag;
+            
+            // Display RFID tag and product name under scanned RFID section
+            const tagElement = document.createElement('div');
+            tagElement.classList.add('tag');
+            tagElement.innerHTML = `<p>RFID Tag ID: ${rfidTag}</p>`;
+            tagsList.appendChild(tagElement);
+
+            // Retrieve the corresponding product information from the "products" node
+            const productRef = ref(database, 'products/' + rfidTag);
+            get(productRef)
+                .then((productSnapshot) => {
+                    const productData = productSnapshot.val();
+                    if (productData) {
+                        // Display product details in cart
+                        const cartElement = document.createElement('div');
+                        cartElement.classList.add('cart-item');
+                        cartElement.innerHTML = `
+                            <h3>${productData.name}</h3>
+                            <p>${productData.description}</p>
+                            <p>Price: $${productData.price}</p>
+                        `;
+                        cartList.appendChild(cartElement);
+
+                        // Update total amount
+                        totalAmount += parseFloat(productData.price);
+                        document.getElementById('total-price').innerText = `Total: $${totalAmount.toFixed(2)}`;
+                    } else {
+                        console.log('Product not found for RFID tag:', rfidTag);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching product data:', error);
+                });
+        });
+    }
+
+    // Call this function to update and display scanned tags when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchScannedTags();
+    });
+  </script>
+  
+  <!-- <style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        display: flex;
+        justify-content: space-between;
+    }
+    .tag, .cart-item {
+        margin: 10px 0;
+    }
+    #tagsList, #cartList {
+        flex: 1;
+        margin: 20px;
+    }
+    h3 {
+        margin: 5px 0;
+    }
+  </style> -->
+</head>
+<body>
+
+  <h1>RFID Shopping Cart</h1>
+
+  <!-- Container for displaying scanned RFID tags and cart items side by side -->
+  <div class="container">
+    <!-- RFID Scans Section -->
+    <section id="scanned-rfid">
+      <h2>RFID Scans</h2>
+      <div id="tagsList">
+        <!-- Dynamically added RFID tags will go here -->
+      </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart">
+      <h2>Your Cart</h2>
+      <div id="cartList">
+        <!-- Dynamically added cart items will go here -->
+      </div>
+    </section>
+     <!-- Total Amount Section -->
+    <h3 id="total-price">Total: $0.00</h3>
+
+    <button id="checkoutBtn">Proceed to Checkout</button>
+
+  </div>
+
+ 
+
+</body>
+</html>

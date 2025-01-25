@@ -1,0 +1,343 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7; /* Soft background color */
+  color: #333;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box; /* Ensure proper box sizing */
+}
+
+/* Header Styles */
+.header {
+  position: relative;
+  z-index: 100;
+  background-color: #007bff; /* Bright blue for header */
+  padding: 15px 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  color: white;
+  width: 100%;
+  box-sizing: border-box; /* Ensure proper width */
+}
+
+.logo {
+  float: left;
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+}
+
+.navbar {
+  float: right;
+  margin-top: 5px;
+}
+
+.navbar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.navbar ul li {
+  display: inline-block;
+}
+
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.navbar ul li a:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+/* Search Bar Styling */
+.search-bar {
+  margin: 20px auto;
+  width: 90%;
+  max-width: 800px;
+  background-color: #fff;
+  padding: 10px 15px;
+  border: 2px solid #007bff;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar .search-input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  margin-right: 10px;
+}
+
+.search-bar .category-dropdown {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  margin-right: 15px;
+}
+
+.search-bar .search-button {
+  padding: 12px 25px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar .search-button:hover {
+  background-color: #0056b3;
+}
+
+/* Content Sections */
+.content-container {
+  flex: 1;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-top: 20px;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.content-section {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box; /* Prevent width overflow */
+}
+
+h1, h2, h3 {
+  color: #2c3e50;
+}
+
+h2 {
+  color: #007bff;
+}
+
+/* Banner Images */
+/* .banner-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover; /* Prevent distortion of the image */
+*/
+
+.banner-image {
+  width: 80%; /* Reduce the width to 80% of the container */
+  max-height: 300px; /* Optional: Limit the height */
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover; /* Prevent distortion of the image */
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
+}
+
+
+/* RFID and Cart Section Side-by-Side */
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+#scanned-rfid, #cart {
+  flex: 1;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+#scanned-rfid {
+  min-width: 300px;
+}
+
+#cart {
+  min-width: 300px;
+}
+
+/* Cart Section */
+#cartPage {
+  display: none;
+}
+
+.scanned-items, .cart-section {
+  margin-bottom: 25px;
+}
+
+#checkoutBtn {
+  font-size: 18px;
+  padding: 15px 25px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+#checkoutBtn:hover {
+  background-color: #218838;
+}
+
+/* Account Section */
+.account-subsection {
+  margin-bottom: 25px;
+}
+
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 3px solid #007bff;
+}
+
+#upload-picture {
+  margin: 15px 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form input, form select, form button {
+  margin-bottom: 15px;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form button {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  padding: 12px 25px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Footer Section */
+footer {
+  background: linear-gradient(135deg, #0066cc, #0099ff);
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+footer h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.social-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-links li {
+  display: inline-block;
+}
+
+.social-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.social-links a:hover {
+  color: #ffdd57;
+  transform: scale(1.1);
+}
+
+.social-links a .fab {
+  font-size: 18px;
+  margin-right: 6px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+      flex-direction: column;
+      gap: 20px;
+  }
+
+  .header-container {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .navbar ul {
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .search-bar {
+      flex-direction: column;
+  }
+
+  .search-bar .category-dropdown, .search-bar .search-input, .search-bar .search-button {
+      margin-bottom: 10px;
+  }
+
+  .logo img {
+      width: 100px;
+  }
+
+  /* Ensure no content goes beyond the screen */
+  .content-section {
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Registration</title>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="adminregistrationform.css">
+</head>
+<body>
+
+  <div class="register-container">
+    <h2>Customer Registration</h2>
+
+    <!-- Registration Form -->
+    <input type="text" id="register_fullname" class="input-field" placeholder="Enter your full name" required>
+    <input type="tel" id="register_phone" class="input-field" placeholder="Enter your phone number" required>
+    <input type="email" id="register_email" class="input-field" placeholder="Enter your email" required>
+    <input type="password" id="register_password" class="input-field" placeholder="Enter your password" required>
+
+    <!-- Additional Details -->
+    <input type="text" id="register_address" class="input-field" placeholder="Enter your delivery address" required>
+    <select id="register_customer_type" class="input-field">
+      <option value="First Time Customer">First Time Customer</option>
+      <option value="Returning Customer">Returning Customer</option>
+    </select>
+    <input type="text" id="register_preferences" class="input-field" placeholder="Enter your shopping preferences (optional)">
+    <input type="date" id="register_birthdate" class="input-field" placeholder="Enter your birthdate (optional)">
+    
+    <button class="register-btn" id="registerButton">Register</button>
+
+    <!-- Footer with Login Link -->
+    <div class="footer">
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkqf4xzSFa6qpFlMF-ce9x6WwDlxCvitw",
+      authDomain: "fir-1-7332d.firebaseapp.com",
+      projectId: "fir-1-7332d",
+      storageBucket: "fir-1-7332d.firebasestorage.app",
+      messagingSenderId: "689157988789",
+      appId: "1:689157988789:web:89530ef7190e4802e2b9fc",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Register function
+    async function registerCustomer() {
+      const fullName = document.getElementById('register_fullname').value.trim();
+      const email = document.getElementById('register_email').value.trim();
+      const password = document.getElementById('register_password').value.trim();
+      const phone = document.getElementById('register_phone').value.trim();
+      const address = document.getElementById('register_address').value.trim();
+      const customerType = document.getElementById('register_customer_type').value;
+      const preferences = document.getElementById('register_preferences').value.trim();
+      const birthdate = document.getElementById('register_birthdate').value;
+
+      // Validate required inputs
+      if (!fullName || !email || !password || !phone || !address) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      try {
+        // Create customer account with Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save customer details to Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+          fullName: fullName,
+          email: user.email,
+          phone: phone,
+          address: address,
+          customerType: customerType,
+          preferences: preferences,
+          birthdate: birthdate || null, // Save birthdate only if provided
+          role: "Customer", // Set role explicitly to Customer
+        });
+
+        alert('Customer registered successfully!');
+        // Redirect to login page after successful registration
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error('Error registering customer:', error.message);
+        alert('Error: ' + error.message);
+      }
+    }
+
+    // Add event listener for the register button
+    document.getElementById('registerButton').addEventListener('click', registerCustomer);
+  </script>
+
+</body>
+</html>

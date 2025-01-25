@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermarket Shopping</title>
+  <link rel="stylesheet" href="stylesland.css">
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <img src="images/smart trolley logo.jpg" alt="ShopEase Logo" class="logo-image">
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#categories">Shop Categories</a></li>
+          <li><a href="#offers">Offers</a></li>
+          <li><a href="#cart">Cart</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="loginpage.html" class="btn-login">Login</a></li>
+          <li><a href="customerregister.html" class="btn-signup">Sign Up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="landing">
+      <h1>Your One-Stop Supermarket</h1>
+      <p>Fresh groceries, top electronics, daily essentials, and much more. Everything you need under one roof!</p>
+      <div class="hero-buttons">
+        <!-- Updated Start Shopping button -->
+        <a href="loginpage.html" class="btn-primary" id="start-shopping">Start Shopping</a>
+        <a href="#offers" class="btn-secondary">View Offers</a>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories" id="categories">
+      <h2>Shop by Categories</h2>
+      <div class="categories-container">
+        <div class="category-item">
+          <img src="images/groceries1.jpg" alt="Groceries">
+          <h3>Groceries</h3>
+        </div>
+        <div class="category-item">
+          <img src="images/electronics1.jpg" alt="Electronics">
+          <h3>Electronics</h3>
+        </div>
+        <div class="category-item">
+          <img src="images/clothing1.jpg" alt="Clothing">
+          <h3>Clothing</h3>
+        </div>
+        <div class="category-item">
+          <img src="images/appliances1.jpg" alt="Home Appliances">
+          <h3>Home Appliances</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section class="offers" id="offers">
+      <h2>Exclusive Offers</h2>
+      <p>Enjoy amazing discounts on your favorite items. Check out our deals now!</p>
+      <ul id="offers-list">
+        <!-- Offers will be dynamically loaded here -->
+      </ul>
+    </section>
+
+    <!-- Cart Section -->
+    <section class="cart" id="cart">
+      <h2>Your Cart</h2>
+      <p>Your selected items will appear here once you add them to your cart.</p>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+      <h2>Contact Us</h2>
+      <p>Have questions? Reach out to us anytime!</p>
+      <p>Email: support@shopease.com</p>
+      <p>Phone: +1-234-567-890</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2024 ShopEase. All Rights Reserved.</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+      // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAkqf4xzSFa6qpFlMF-ce9x6WwDlxCvitw",
+    authDomain: "fir-1-7332d.firebaseapp.com",
+    databaseURL: "https://fir-1-7332d-default-rtdb.firebaseio.com",
+    projectId: "fir-1-7332d",
+    storageBucket: "fir-1-7332d.firebasestorage.app",
+    messagingSenderId: "689157988789",
+    appId: "1:689157988789:web:89530ef7190e4802e2b9fc",
+    measurementId: "G-165ZMR7RPV"
+  };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Load Offers
+    async function loadOffers() {
+      const offersList = document.getElementById("offers-list");
+      offersList.innerHTML = ""; // Clear existing offers
+      try {
+        const offersSnapshot = await getDocs(collection(db, "offers"));
+        offersSnapshot.forEach((doc) => {
+          const offer = doc.data();
+          const offerItem = document.createElement("li");
+          offerItem.textContent = `${offer.name} - ${offer.discount}`;
+          offersList.appendChild(offerItem);
+        });
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+    }
+
+    // Redirect on Start Shopping button click
+    document.getElementById("start-shopping").addEventListener("click", (e) => {
+      e.preventDefault(); // Prevent default anchor behavior
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, redirect to categories section
+          window.location.href = "#categories";
+        } else {
+          // User is not signed in, redirect to login page
+          window.location.href = "loginpage.html";
+        }
+      });
+    });
+
+    // Load offers on page load
+    loadOffers();
+  </script>
+</body>
+</html>
